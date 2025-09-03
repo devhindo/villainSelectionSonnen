@@ -118,3 +118,5 @@ problem even if it is just a text file, a diagram, git commits etc. because we
 would like to see your problem-solving approach, not only the final solution.
 
 [1]: https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-personal-account-on-github/managing-access-to-your-personal-repositories/inviting-collaborators-to-a-personal-repository
+
+- run a specific test case by line: `mix test test/villain_selection_test.exs:55`

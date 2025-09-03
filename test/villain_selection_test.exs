@@ -2431,4 +2431,412 @@ defmodule VillainSelectionTest do
 
     assert {:error, _} = actual_result
   end
+
+  test "case_11: Multiple attack modes - closest-first and prioritize-vader" do
+    input = """
+    {
+      "attack_modes": [
+        "closest-first",
+        "prioritize-vader"
+      ],
+      "radar": [
+        {
+          "position": {
+            "x": 10,
+            "y": 10
+          },
+          "villains": [
+            {
+              "costume": "Joker",
+              "malice": 90
+            },
+            {
+              "costume": "Captain Hook",
+              "malice": 80
+            }
+          ]
+        },
+        {
+          "position": {
+            "x": 5,
+            "y": 5
+          },
+          "villains": [
+            {
+              "costume": "Darth Vader",
+              "malice": 70
+            },
+            {
+              "costume": "Voldemort",
+              "malice": 60
+            }
+          ]
+        }
+      ]
+    }
+    """
+
+    actual_result = VillainSelection.select(input)
+
+    expected_result = {:ok, "{\"position\":{\"x\":5,\"y\":5},\"villains\":[\"Darth Vader\",\"Voldemort\"]}"}
+    assert actual_result == expected_result
+  end
+
+  test "case_12: All villains are Donald Duck - should return error" do
+    input = """
+    {
+      "attack_modes": [
+        "closest-first"
+      ],
+      "radar": [
+        {
+          "position": {
+            "x": 10,
+            "y": 10
+          },
+          "villains": [
+            {
+              "costume": "Donald Duck"
+            },
+            {
+              "costume": "Donald Duck"
+            }
+          ]
+        }
+      ]
+    }
+    """
+
+    actual_result = VillainSelection.select(input)
+    assert {:error, _} = actual_result
+  end
+
+  test "case_13: Villains without malice field - should default to 0" do
+    input = """
+    {
+      "attack_modes": [
+        "closest-first"
+      ],
+      "radar": [
+        {
+          "position": {
+            "x": 5,
+            "y": 5
+          },
+          "villains": [
+            {
+              "costume": "Joker",
+              "malice": 50
+            },
+            {
+              "costume": "Voldemort"
+            },
+            {
+              "costume": "Captain Hook",
+              "malice": 30
+            }
+          ]
+        }
+      ]
+    }
+    """
+
+    actual_result = VillainSelection.select(input)
+
+    expected_result = {:ok, "{\"position\":{\"x\":5,\"y\":5},\"villains\":[\"Joker\",\"Captain Hook\",\"Voldemort\"]}"}
+    assert actual_result == expected_result
+  end
+
+  test "case_14: Prioritize-vader with multiple Vader positions" do
+    input = """
+    {
+      "attack_modes": [
+        "prioritize-vader"
+      ],
+      "radar": [
+        {
+          "position": {
+            "x": 10,
+            "y": 10
+          },
+          "villains": [
+            {
+              "costume": "Darth Vader",
+              "malice": 50
+            },
+            {
+              "costume": "Joker",
+              "malice": 90
+            }
+          ]
+        },
+        {
+          "position": {
+            "x": 20,
+            "y": 20
+          },
+          "villains": [
+            {
+              "costume": "Captain Hook",
+              "malice": 80
+            }
+          ]
+        },
+        {
+          "position": {
+            "x": 5,
+            "y": 5
+          },
+          "villains": [
+            {
+              "costume": "Darth Vader",
+              "malice": 95
+            },
+            {
+              "costume": "Voldemort",
+              "malice": 70
+            }
+          ]
+        }
+      ]
+    }
+    """
+
+    actual_result = VillainSelection.select(input)
+
+    expected_result = {:ok, "{\"position\":{\"x\":5,\"y\":5},\"villains\":[\"Darth Vader\",\"Voldemort\"]}"}
+    assert actual_result == expected_result
+  end
+
+  test "case_15: Avoid-crossfire removes all positions - should return error" do
+    input = """
+    {
+      "attack_modes": [
+        "avoid-crossfire"
+      ],
+      "radar": [
+        {
+          "position": {
+            "x": 10,
+            "y": 10
+          },
+          "villains": [
+            {
+              "costume": "Joker",
+              "malice": 90
+            },
+            {
+              "costume": "Donald Duck"
+            }
+          ]
+        },
+        {
+          "position": {
+            "x": 20,
+            "y": 20
+          },
+          "villains": [
+            {
+              "costume": "Donald Duck"
+            },
+            {
+              "costume": "Captain Hook",
+              "malice": 80
+            }
+          ]
+        }
+      ]
+    }
+    """
+
+    actual_result = VillainSelection.select(input)
+    assert {:error, _} = actual_result
+  end
+
+  test "case_16: Complex combination - avoid-crossfire, furthest-first, prioritize-vader" do
+    input = """
+    {
+      "attack_modes": [
+        "avoid-crossfire",
+        "furthest-first",
+        "prioritize-vader"
+      ],
+      "radar": [
+        {
+          "position": {
+            "x": 5,
+            "y": 5
+          },
+          "villains": [
+            {
+              "costume": "Joker",
+              "malice": 90
+            },
+            {
+              "costume": "Donald Duck"
+            }
+          ]
+        },
+        {
+          "position": {
+            "x": 10,
+            "y": 10
+          },
+          "villains": [
+            {
+              "costume": "Captain Hook",
+              "malice": 80
+            }
+          ]
+        },
+        {
+          "position": {
+            "x": 50,
+            "y": 50
+          },
+          "villains": [
+            {
+              "costume": "Darth Vader",
+              "malice": 70
+            },
+            {
+              "costume": "Voldemort",
+              "malice": 85
+            }
+          ]
+        },
+        {
+          "position": {
+            "x": 30,
+            "y": 30
+          },
+          "villains": [
+            {
+              "costume": "Lucifer",
+              "malice": 95
+            }
+          ]
+        }
+      ]
+    }
+    """
+
+    actual_result = VillainSelection.select(input)
+
+    expected_result = {:ok, "{\"position\":{\"x\":50,\"y\":50},\"villains\":[\"Darth Vader\",\"Voldemort\"]}"}
+    assert actual_result == expected_result
+  end
+
+  test "case_17: Empty radar array - should return error" do
+    input = """
+    {
+      "attack_modes": [
+        "closest-first"
+      ],
+      "radar": []
+    }
+    """
+
+    actual_result = VillainSelection.select(input)
+    assert {:error, _} = actual_result
+  end
+
+  test "case_18: Single villain with zero malice" do
+    input = """
+    {
+      "attack_modes": [
+        "closest-first"
+      ],
+      "radar": [
+        {
+          "position": {
+            "x": 15,
+            "y": 25
+          },
+          "villains": [
+            {
+              "costume": "Shir Khan",
+              "malice": 0
+            }
+          ]
+        }
+      ]
+    }
+    """
+
+    actual_result = VillainSelection.select(input)
+
+    expected_result = {:ok, "{\"position\":{\"x\":15,\"y\":25},\"villains\":[\"Shir Khan\"]}"}
+    assert actual_result == expected_result
+  end
+
+  test "case_19: Prioritize-vader in villain sorting with mixed malice levels" do
+    input = """
+    {
+      "attack_modes": [
+        "closest-first",
+        "prioritize-vader"
+      ],
+      "radar": [
+        {
+          "position": {
+            "x": 8,
+            "y": 6
+          },
+          "villains": [
+            {
+              "costume": "Joker",
+              "malice": 95
+            },
+            {
+              "costume": "Darth Vader",
+              "malice": 40
+            },
+            {
+              "costume": "Captain Hook",
+              "malice": 85
+            },
+            {
+              "costume": "Voldemort",
+              "malice": 75
+            }
+          ]
+        }
+      ]
+    }
+    """
+
+    actual_result = VillainSelection.select(input)
+
+    expected_result = {:ok, "{\"position\":{\"x\":8,\"y\":6},\"villains\":[\"Darth Vader\",\"Joker\",\"Captain Hook\",\"Voldemort\"]}"}
+    assert actual_result == expected_result
+  end
+
+  test "case_20: Conflicting attack modes - should return error" do
+    input = """
+    {
+      "attack_modes": [
+        "closest-first",
+        "furthest-first"
+      ],
+      "radar": [
+        {
+          "position": {
+            "x": 10,
+            "y": 10
+          },
+          "villains": [
+            {
+              "costume": "Joker",
+              "malice": 90
+            }
+          ]
+        }
+      ]
+    }
+    """
+
+    actual_result = VillainSelection.select(input)
+    assert {:error, _} = actual_result
+  end
 end

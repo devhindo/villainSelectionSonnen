@@ -1,20 +1,22 @@
 # Example input for closest-first attack mode
 input = """
 {
-  "attack_modes": ["closest-first"],
+  "attack_modes": [
+    "closest-first"
+  ],
   "radar": [
     {
-      "position": {"x": 10, "y": 20},
+      "position": {
+        "x": 10,
+        "y": 10
+      },
       "villains": [
-        {"costume": "Joker", "malice": 85},
-        {"costume": "Penguin", "malice": 70}
-      ]
-    },
-    {
-      "position": {"x": 10, "y": 10},
-      "villains": [
-        {"costume": "Darth Vader", "malice": 95},
-        {"costume": "Magneto", "malice": 80}
+        {
+          "costume": "Donald Duck"
+        },
+        {
+          "costume": "Donald Duck"
+        }
       ]
     }
   ]
