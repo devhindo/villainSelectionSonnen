@@ -33,7 +33,7 @@ defmodule VillainSelection.AttackModes do
   """
   def apply_furthest_first(radar_data) do
       radar_data
-      |> apply_closest_first()
+      |> apply_closest_first() # O(nlogn + n) # O(nlogn)
       |> Enum.reverse()
   end
 
@@ -94,7 +94,7 @@ defmodule VillainSelection.AttackModes do
     all_supported = Enum.all?(attack_modes, fn mode -> mode in supported_modes end)
 
     # Check for conflicting modes
-has_conflicts = Enum.member?(attack_modes, "closest-first") && Enum.member?(attack_modes, "furthest-first")
+    has_conflicts = Enum.member?(attack_modes, "closest-first") && Enum.member?(attack_modes, "furthest-first")
 
     cond do
       !all_supported -> {:error, "Unsupported attack mode provided"}
