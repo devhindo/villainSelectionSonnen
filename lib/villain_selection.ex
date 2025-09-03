@@ -109,9 +109,6 @@ defmodule VillainSelection do
     # Apply attack modes to filter and sort radar data
     processed_radar = AttackModes.apply_attack_modes(radar, attack_modes)
 
-    IO.inspect(processed_radar, label: "Input data")
-    # IO.puts(Jason.encode!(processed_radar, pretty: true))
-
     case processed_radar do
       [] -> {:error, "No valid targets after applying attack modes"}
       [first_position | _] ->

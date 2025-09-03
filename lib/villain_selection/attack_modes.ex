@@ -57,7 +57,6 @@ defmodule VillainSelection.AttackModes do
         villain["costume"] == "Darth Vader"
       end)
     end)
-
     if Enum.empty?(positions_with_vader), do: radar_data, else: positions_with_vader
   end
 
@@ -82,7 +81,6 @@ defmodule VillainSelection.AttackModes do
         Map.get(villain, "malice", 0)
       end, :desc)
     end
-
     Enum.map(sorted_villains, fn villain -> villain["costume"] end)
   end
 
