@@ -1,3 +1,11 @@
+# Video Explaining My Solution
+
+<div align="center" style="width: 100%;">
+    <a href="https://youtu.be/-TnP5JagkII">
+        <img src="https://img.youtube.com/vi/-TnP5JagkII/maxresdefault.jpg" alt="Preview" style="width: 100%; max-width: 100%;">
+    </a>
+</div>
+
 Dear comic fan,
 
 You're invited to a carnival party with the motto "comic-heroes". Some guests
