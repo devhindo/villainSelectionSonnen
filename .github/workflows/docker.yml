@@ -1,0 +1,31 @@
+name: Docker Build and Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  docker-build-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Build Docker image
+      run: |
+        docker build -t villain-selection:${{ github.sha }} .
+        docker tag villain-selection:${{ github.sha }} villain-selection:latest
+        
+    - name: Run tests in container
+      run: |
+        docker run --rm villain-selection:${{ github.sha }}
+        
+    - name: Test container with example
+      run: |
+        docker run --rm villain-selection:${{ github.sha }} mix run example.ex
